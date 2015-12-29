@@ -27,7 +27,7 @@ data_path = "dataset/data.npz"
 
 np.random.seed(1337)  # for reproducibility
 nb_classes = 2
-nb_epoch = 100
+nb_epoch = 300
 batch_size = 128
 
 data = np.load(data_path)
@@ -51,9 +51,9 @@ print(train_x.shape[0], ' train samples')
 print(test_x.shape[0], ' test samples')
 
 model = Sequential()
-model.add(Dense(128, activation = 'relu', input_shape=(train_x.shape[1],)))
+model.add(Dense(128, activation = 'relu', input_shape=(train_x.shape[1], ), W_regularizer = l2(0.0001), b_regularizer = l2(0.0001)))
 model.add(Dropout(0.2))
-model.add(Dense(128,  activation = 'relu'))
+model.add(Dense(128,  activation = 'relu', W_regularizer = l2(0.0001), b_regularizer = l2(0.0001)))
 model.add(Dropout(0.5))
 #model.add(Dense(32, W_regularizer = l2(0.0001), b_regularizer = l2(0.0001)))
 #model.add(Activation('relu'))
@@ -66,20 +66,20 @@ model.add(Dropout(0.5))
 #model.add(Dense(512, W_regularizer = l2(0.001), b_regularizer = l2(0.001)))
 #model.add(Activation('relu'))
 #model.add(Dropout(0.5))
-model.add(Dense(train_y.shape[1]))
+model.add(Dense(train_y.shape[1], W_regularizer = l2(0.0001), b_regularizer = l2(0.0001)))
 model.add(Activation('softmax'))
 #model.add(Dropout(0.5))
 
 rms = RMSprop()
 adagrad = Adagrad()
-adadelta = Adadelta()
+adadelta = Adadelta(lr = 5 * 10e-4)
 adam = Adam()
-sgd = SGD(lr = 10e-3, momentum = 0.0, decay = 10e-4)
+sgd = SGD(lr = 10e-5, momentum = 0.5, decay = 10e-3)
 
 model.compile(loss='binary_crossentropy', optimizer = adadelta)
 #plot(model, to_file='model.png')
 class_weight = {0 : 1, 1 : 16}
-model.fit(train_x, train_y, batch_size=batch_size, nb_epoch=nb_epoch, show_accuracy=True, class_weight = class_weight, verbose=1, shuffle = True, validation_data = (test_x, test_y))
+model.fit(train_x, train_y, batch_size=batch_size, nb_epoch=nb_epoch, show_accuracy=True, class_weight = class_weight, verbose=1, shuffle = True, validation_split = 0.1)
 [score, acc] = model.evaluate(test_x, test_y, show_accuracy=True, verbose=0)
 print("score: " + str(score) + ", acc: " + str(acc))
 label = model.predict_classes(test_x, batch_size = 128, verbose=1)
