@@ -16,7 +16,8 @@ data_url = "http://staff.ustc.edu.cn/~ketang/PPT/dataset.zip"
 if ~os.path.isfile(data_path + preprocessed_data_file):
     child = subprocess.Popen("wget " + data_url, shell = True) 
     child.wait()
-    subprocess.Popen("unzip dataset.zip", shell = True)
+    child = subprocess.Popen("unzip dataset.zip", shell = True)
+    child.wait()
     subprocess.Popen("rm dataset.zip", shell = True)
 classes = 2
 
