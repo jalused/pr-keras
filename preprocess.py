@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+import os
+import subprocess
 import numpy as np
 from keras.utils import np_utils
 
@@ -9,7 +11,13 @@ data_path = "dataset/"
 train_file = "train.data"
 test_file = "test.data"
 preprocessed_data_file = "data.npz"
+data_url = "http://staff.ustc.edu.cn/~ketang/PPT/dataset.zip"
 
+if ~os.path.isfile(data_path + preprocessed_data_file):
+    child = subprocess.Popen("wget " + data_url, shell = True) 
+    child.wait()
+    subprocess.Popen("unzip dataset.zip", shell = True)
+    subprocess.Popen("rm dataset.zip", shell = True)
 classes = 2
 
 train_data = np.genfromtxt(data_path + train_file)
